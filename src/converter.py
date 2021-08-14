@@ -1,6 +1,8 @@
 from __future__ import annotations
+
+import re
 from pathlib import Path
-from typing import Tuple, Literal
+from typing import Literal
 
 import json
 
@@ -11,6 +13,7 @@ __prolonged_sound_mark_point = ord("ー")
 
 _following_vowel = json.load((Path(__file__) / ".." / "data" / "kana_map.json").resolve().open())
 _kana_to_romanji = json.load((Path(__file__) / ".." / "data" / "romanji.json").resolve().open())
+_romanji_to_kana = json.load((Path(__file__) / ".." / "data" / "romanji2.json").resolve().open())
 _map_punctuation = {
     "english": {
         ".": "。",
@@ -25,6 +28,8 @@ _map_punctuation = {
         "」": '"',
     }
 }
+
+__vowels = "aeiou"
 
 
 def __convert(kana: str,
@@ -57,15 +62,19 @@ def __convert(kana: str,
             raise ValueError(f"Unkown character {character}")
 
     if use_prolonged_mark:
-        for i in range(1, len(output)):
-            try:
-                extension = _following_vowel[to][output[i - 1]]
-                if extension == output[i]:
-                    output[i] = __prolonged_sound_mark
-            except KeyError:
-                pass
+        __replace_with_prolonged_mark(output, to)
 
     return "".join(output)
+
+
+def __replace_with_prolonged_mark(output, to):
+    for i in range(1, len(output)):
+        try:
+            extension = _following_vowel[to][output[i - 1]]
+            if extension == output[i]:
+                output[i] = __prolonged_sound_mark
+        except KeyError:
+            pass
 
 
 def hiragana_to_katakana(kana, use_prolonged_mark=True):
@@ -81,7 +90,6 @@ def hiragana_to_romanji(kana):
 
 
 def katakana_to_romanji(kana):
-
     output = []
 
     duplicate_consonant = False
@@ -101,7 +109,8 @@ def katakana_to_romanji(kana):
         elif character == "ッ":
             duplicate_consonant = True
         elif char_code == __prolonged_sound_mark_point:
-            output.append(output[-1])
+            last = output[-1]
+            output.append(last)
         elif 12353 + 96 <= char_code <= 12438 + 96:
             romanji = _kana_to_romanji[character]
             if duplicate_consonant:
@@ -114,8 +123,43 @@ def katakana_to_romanji(kana):
     return "".join(output)
 
 
-def romanji_to_katakana(romanji, use_prolonged_mark=True):
-    pass
+def romanji_to_katakana(romanji: str, use_prolonged_mark=True):
+    romanji = romanji.lower()
+
+    for f, s in [(r"c[^h]", lambda x: "k" + x.group(0)[1:]), ("x", "ks"), ("q", "k"), ("l", "r"), ("v", "b")]:
+        romanji = re.sub(f, s, romanji)
+
+    out = []
+    i = 0
+    previous_consonant = False
+    while i < len(romanji):
+        if romanji[i] in __vowels:
+            if not previous_consonant:
+                out.append(_romanji_to_kana[""][romanji[i]])
+            else:
+                out.append(_romanji_to_kana[previous_consonant][romanji[i]])
+            previous_consonant = False
+        else:
+            if previous_consonant:
+                if romanji[i - 1] == romanji[i]:
+                    out.append("ッ")
+                    previous_consonant = romanji[i]
+                elif romanji[i - 1: i + 1] in _romanji_to_kana:
+                    previous_consonant = romanji[i - 1: i + 1]
+                else:
+                    if previous_consonant == "t":
+                        out.append("ト")
+                    else:
+                        out.append(_romanji_to_kana[previous_consonant]["u"])
+                    previous_consonant = romanji[i]
+            else:
+                previous_consonant = romanji[i]
+        i += 1
+
+    if use_prolonged_mark:
+        __replace_with_prolonged_mark(out, "katakana")
+
+    return "".join(out)
 
 
 def romanji_to_hiragana(romanji, use_prolonged_mark=False):
@@ -123,5 +167,4 @@ def romanji_to_hiragana(romanji, use_prolonged_mark=False):
 
 
 if __name__ == '__main__':
-
-    assert katakana_to_romanji("キャー") == "kyaa"
+    romanji_to_katakana("chchici")

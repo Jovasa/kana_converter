@@ -1,6 +1,6 @@
 import pytest
 
-from converter import hiragana_to_katakana, katakana_to_hiragana, katakana_to_romanji
+from converter import hiragana_to_katakana, katakana_to_hiragana, katakana_to_romanji, romanji_to_katakana
 
 
 def test_simple_hira_to_kata():
@@ -34,3 +34,14 @@ def test_kana_to_romanji():
     assert katakana_to_romanji("キャー") == "kyaa"
     assert katakana_to_romanji("カッパ") == "kappa"
     assert katakana_to_romanji("チャット") == "chatto"
+
+
+def test_romanji_to_kana():
+    assert romanji_to_katakana("aeiou") == "アエイオウ"
+    assert romanji_to_katakana("karada") == "カラダ"
+    assert romanji_to_katakana("kappa") == "カッパ"
+    assert romanji_to_katakana("tsurui") == "ツルイ"
+    assert romanji_to_katakana("qwrtypsdfghjklzxcbnm")
+    assert romanji_to_katakana("chchici") == "チュチキ"
+    assert romanji_to_katakana("excalibaa", False) == "エクスカリバア"
+    assert romanji_to_katakana("excalibaa", True) == "エクスカリバー"
