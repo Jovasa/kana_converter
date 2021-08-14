@@ -85,13 +85,16 @@ def katakana_to_romanji(kana):
     output = []
 
     duplicate_consonant = False
-
+    previous_kana = ""
     for character in kana:
         char_code = ord(character)
         if character in "ァィゥェォ":
             output[-1] = _kana_to_romanji[character][0]
         elif character in "ャュョ":
-            output[-1] = "y"
+            if previous_kana not in "シジチヂ":
+                output[-1] = "y"
+            else:
+                output.pop()
             output.append(_kana_to_romanji[character][1])
         elif character in __punctuation:
             output.append(_map_punctuation[character])
@@ -106,6 +109,7 @@ def katakana_to_romanji(kana):
             output.extend(romanji)
         else:
             raise ValueError(f"Unkown character {character}")
+        previous_kana = character
 
     return "".join(output)
 

@@ -33,3 +33,4 @@ def test_kana_to_romanji():
     assert katakana_to_romanji("キャア") == "kyaa"
     assert katakana_to_romanji("キャー") == "kyaa"
     assert katakana_to_romanji("カッパ") == "kappa"
+    assert katakana_to_romanji("チャット") == "chatto"
