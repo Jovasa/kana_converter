@@ -1,6 +1,6 @@
 import pytest
 
-from converter import hiragana_to_katakana, katakana_to_hiragana
+from converter import hiragana_to_katakana, katakana_to_hiragana, katakana_to_romanji
 
 
 def test_simple_hira_to_kata():
@@ -27,3 +27,9 @@ def test_prolonged_mark():
 
     assert hiragana_to_katakana("ああ", use_prolonged_mark=True) == "アー"
     assert hiragana_to_katakana("きゃあ", use_prolonged_mark=True) == "キャー"
+
+
+def test_kana_to_romanji():
+    assert katakana_to_romanji("キャア") == "kyaa"
+    assert katakana_to_romanji("キャー") == "kyaa"
+    assert katakana_to_romanji("カッパ") == "kappa"

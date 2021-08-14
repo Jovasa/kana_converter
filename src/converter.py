@@ -10,6 +10,21 @@ __prolonged_sound_mark = "ー"  # Also known as Chōonpu
 __prolonged_sound_mark_point = ord("ー")
 
 _following_vowel = json.load((Path(__file__) / ".." / "data" / "kana_map.json").resolve().open())
+_kana_to_romanji = json.load((Path(__file__) / ".." / "data" / "romanji.json").resolve().open())
+_map_punctuation = {
+    "english": {
+        ".": "。",
+        ",": "、",
+        '"': "「」",
+    },
+    "japanese": {
+        "、": ",",
+        "。": ".",
+        "・": "",
+        "「": '"',
+        "」": '"',
+    }
+}
 
 
 def __convert(kana: str,
@@ -62,11 +77,37 @@ def katakana_to_hiragana(kana, use_prolonged_mark=False):
 
 
 def hiragana_to_romanji(kana):
-    pass
+    return katakana_to_romanji(hiragana_to_katakana(kana))
 
 
 def katakana_to_romanji(kana):
-    pass
+
+    output = []
+
+    duplicate_consonant = False
+
+    for character in kana:
+        char_code = ord(character)
+        if character in "ァィゥェォ":
+            output[-1] = _kana_to_romanji[character][0]
+        elif character in "ャュョ":
+            output[-1] = "y"
+            output.append(_kana_to_romanji[character][1])
+        elif character in __punctuation:
+            output.append(_map_punctuation[character])
+        elif character == "ッ":
+            duplicate_consonant = True
+        elif char_code == __prolonged_sound_mark_point:
+            output.append(output[-1])
+        elif 12353 + 96 <= char_code <= 12438 + 96:
+            romanji = _kana_to_romanji[character]
+            if duplicate_consonant:
+                output.append(romanji[0])
+            output.extend(romanji)
+        else:
+            raise ValueError(f"Unkown character {character}")
+
+    return "".join(output)
 
 
 def romanji_to_katakana(romanji, use_prolonged_mark=True):
@@ -75,3 +116,8 @@ def romanji_to_katakana(romanji, use_prolonged_mark=True):
 
 def romanji_to_hiragana(romanji, use_prolonged_mark=False):
     pass
+
+
+if __name__ == '__main__':
+
+    assert katakana_to_romanji("キャー") == "kyaa"
