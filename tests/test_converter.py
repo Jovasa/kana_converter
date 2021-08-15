@@ -45,3 +45,5 @@ def test_romanji_to_kana():
     assert romanji_to_katakana("chchici") == "チュチキ"
     assert romanji_to_katakana("excalibaa", False) == "エクスカリバア"
     assert romanji_to_katakana("excalibaa", True) == "エクスカリバー"
+    assert romanji_to_katakana("m") == "ム"
+    assert romanji_to_katakana("gamma") == "ガンマ"

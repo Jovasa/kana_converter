@@ -142,7 +142,10 @@ def romanji_to_katakana(romanji: str, use_prolonged_mark=True):
         else:
             if previous_consonant:
                 if romanji[i - 1] == romanji[i]:
-                    out.append("ッ")
+                    if romanji[i] in "nm":
+                        out.append("ン")
+                    else:
+                        out.append("ッ")
                     previous_consonant = romanji[i]
                 elif romanji[i - 1: i + 1] in _romanji_to_kana:
                     previous_consonant = romanji[i - 1: i + 1]
@@ -156,6 +159,20 @@ def romanji_to_katakana(romanji: str, use_prolonged_mark=True):
                 previous_consonant = romanji[i]
         i += 1
 
+    if previous_consonant:
+        if previous_consonant == "t":
+            out.append("ト")
+        elif previous_consonant == "m":
+            try:
+                out.pop()
+            except IndexError:
+                pass
+            out.append("ム")
+        elif previous_consonant != "n":
+            out.append(_romanji_to_kana[previous_consonant]["u"])
+        else:
+            out.append("ン")
+
     if use_prolonged_mark:
         __replace_with_prolonged_mark(out, "katakana")
 
@@ -167,4 +184,4 @@ def romanji_to_hiragana(romanji, use_prolonged_mark=False):
 
 
 if __name__ == '__main__':
-    romanji_to_katakana("chchici")
+    romanji_to_katakana("gamma")
