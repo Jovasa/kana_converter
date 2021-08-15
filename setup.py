@@ -4,9 +4,10 @@ setup(
     name='kana_converter',
     version='0.2.0',
     license="BSD-2-Clause",
-    package_dir={'': 'src'},
-    packages=find_packages(where='src'),
-    package_data = {
-        "data": ["*.json"]
-    }
+    package_dir={'kana_converter': 'src'},
+    packages=["kana_converter"],
+    package_data={
+        "kana_converter": ["data/*.json"]
+    },
+    py_modules=["kana_converter"]
 )

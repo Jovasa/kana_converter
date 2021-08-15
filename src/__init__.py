@@ -1,1 +1,1 @@
-from . import converter
+from .converter import romanji_to_katakana, romanji_to_hiragana, hiragana_to_romanji, hiragana_to_katakana, katakana_to_romanji, katakana_to_hiragana
