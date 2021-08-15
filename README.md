@@ -1,0 +1,1 @@
+A simple library for converting between katakana, hiragana, and romanji.
