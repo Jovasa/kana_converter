@@ -1,6 +1,6 @@
 import pytest
 
-from converter import hiragana_to_katakana, katakana_to_hiragana, katakana_to_romanji, romanji_to_katakana
+from kana_converter import hiragana_to_katakana, katakana_to_hiragana, katakana_to_romanji, romanji_to_katakana
 
 
 def test_simple_hira_to_kata():
@@ -47,3 +47,9 @@ def test_romanji_to_kana():
     assert romanji_to_katakana("excalibaa", True) == "エクスカリバー"
     assert romanji_to_katakana("m") == "ム"
     assert romanji_to_katakana("gamma") == "ガンマ"
+
+
+def test_whitespaces():
+    assert romanji_to_katakana("a e i o u") == "ア エ イ オ ウ"
+    assert romanji_to_katakana("ch ch") == "チュ チュ"
+    assert katakana_to_romanji("ア エ イ オ ウ") == "a e i o u"
