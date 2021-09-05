@@ -130,6 +130,7 @@ def katakana_to_romanji(kana,
             romanji = _kana_to_romanji[character]
             if duplicate_consonant:
                 output.append(romanji[0])
+                duplicate_consonant = False
             output.extend(romanji)
         elif character == " ":
             output.append(" ")
