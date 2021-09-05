@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='kana_converter',
-    version='0.3.0',
+    version='0.3.1',
     license="BSD-2-Clause",
     package_dir={'kana_converter': 'src'},
     packages=["kana_converter"],
