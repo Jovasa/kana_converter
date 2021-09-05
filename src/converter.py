@@ -53,7 +53,6 @@ def __convert(kana: str,
             output.append(character)
             continue
         code_point = ord(character)
-        print(code_point, valid_range, code_point + offset)
         if valid_range[0] <= code_point <= valid_range[1]:
             output.append(chr(code_point + offset))
         elif code_point in __punctuation:
