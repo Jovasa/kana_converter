@@ -170,7 +170,9 @@ def romanji_to_katakana(romanji: str, use_prolonged_mark=True,
                 previous_consonant = False
             else:
                 if previous_consonant:
-                    if word[i - 1] == word[i]:
+                    if word[i] == "y":
+                        previous_consonant = f"{previous_consonant}y"
+                    elif word[i - 1] == word[i]:
                         if word[i] in "nm":
                             out.append("ン")
                         else:
